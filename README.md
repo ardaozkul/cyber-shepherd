@@ -27,7 +27,7 @@
 <p align="center">
   <img src="docs/images/tubitak_award_ceremony.png" alt="TÜBİTAK 2204-A Ödül Töreni - Arda ÖZKUL" width="700">
   <br>
-  <em>TÜBİTAK 2204-A Araştırma Projeleri Ödül Töreni — Arda ÖZKUL &nbsp;|&nbsp; 🎥 <a href="https://www.youtube.com/live/NBXWoSTFw_w?t=4961s">Canlı Yayın Kaydı (1:22:41)</a></em>
+  <em>TÜBİTAK 2204-A Araştırma Projeleri Ödül Töreni (30 Nisan 2026) — Arda ÖZKUL &nbsp;|&nbsp; 🎥 <a href="https://www.youtube.com/live/NBXWoSTFw_w?t=4961s">Canlı Yayın Kaydı (1:22:41)</a></em>
 </p>
 
 ### 🔌 Real Hardware Prototype (ESP32-C3 Smart Collar / Akıllı Tasma Prototipi)
@@ -62,6 +62,7 @@
 - **Competition:** TÜBİTAK 2204-A High School Research Projects Competition (2026)
 - **Field / Category:** Technology & Design (Teknoloji ve Tasarım)
 - **Awards:** 🥇 **Regional Champion (1st Place)** &nbsp;|&nbsp; 🎖️ **National Finalist (4th Place Nationwide)**
+- **Date of Award:** April 30, 2026 (30 Nisan 2026)
 - **Ceremony Record:** 🎥 [Official Live Stream Broadcast (Timestamp 1:22:41)](https://www.youtube.com/live/NBXWoSTFw_w?t=4961s)
 
 ## 📖 Overview
@@ -196,6 +197,7 @@ For security reasons, Google Maps API keys have been replaced with the placehold
 - **Yarışma:** TÜBİTAK 2204-A Lise Öğrencileri Araştırma Projeleri Yarışması (2026)
 - **Alan:** Teknoloji ve Tasarım
 - **Dereceler:** 🥇 **Bölge Birinciliği** &nbsp;|&nbsp; 🎖️ **Türkiye 4.lüğü (Türkiye Finalleri)**
+- **Ödül Tarihi:** 30 Nisan 2026
 - **Tören Yayını:** 🎥 [Resmi Canlı Yayın Ödül Takdimi (1:22:41)](https://www.youtube.com/live/NBXWoSTFw_w?t=4961s)
 
 ## 📖 Proje Özeti
