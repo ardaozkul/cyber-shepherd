@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f5f5f5">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Logo / Başlık -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🐑 SİBER ÇOBAN v2"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:textColor="#667eea"
+            android:gravity="center"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Akıllı Hayvan Takip Sistemi"
+            android:textSize="14sp"
+            android:textColor="#666"
+            android:gravity="center"
+            android:layout_marginBottom="24dp" />
+
+        <!-- 📋 1. BÖLÜM: HARİTA PLANLAMA -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardElevation="4dp"
+            app:cardCornerRadius="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="📋 1. Harita Planlama"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#333"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Ahır konumları, otlak alanları ve simülasyon planlaması yapın"
+                    android:textSize="13sp"
+                    android:textColor="#666"
+                    android:layout_marginBottom="12dp" />
+
+                <Button
+                    android:id="@+id/btnOpenSimulation"
+                    android:layout_width="match_parent"
+ android:layout_height="56dp"
+                    android:text="🗺️ Harita Planlamaya Git →"
+                    android:textSize="16sp"
+                    android:textColor="#FFFFFF"
+                    android:background="#4CAF50" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- 📡 2. BÖLÜM: CİHAZ BAĞLANTISI (WiFi) -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardElevation="4dp"
+            app:cardCornerRadius="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="📡 2. Cihaz Bağlantısı (WiFi Hotspot)"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#333"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/txtConnectionStatus"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Durum: Hotspot Kapalı"
+                    android:textSize="14sp"
+                    android:textColor="#666"
+                    android:layout_marginBottom="12dp" />
+
+                <TextView
+                    android:id="@+id/txtConnectedDevices"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="✓ 0 ESP32 Bağlı"
+                    android:textSize="14sp"
+                    android:textColor="#4CAF50"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    android:layout_marginBottom="12dp" />
+
+                <TextView
+                    android:id="@+id/txtConnectionWarning"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="⚠️ Henüz bağlı ESP32 cihazı yok\n\nHotspot açın ve ESP32'lerin bağlanmasını bekleyin"
+                    android:textSize="13sp"
+                    android:textColor="#ff9800"
+                    android:gravity="center"
+                    android:padding="16dp"
+                    android:background="#FFF3E0"
+                    android:visibility="visible"
+                    android:layout_marginBottom="12dp" />
+
+                <Button
+                    android:id="@+id/btnWiFiSettings"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="⚙️ Hotspot Ayarları"
+                    android:textSize="16sp"
+                    android:textColor="#FFFFFF"
+                    android:background="#2196F3" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- 🎛️ 3. BÖLÜM: KONTROL PANELİ -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardElevation="4dp"
+            app:cardCornerRadius="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="🎛️ 3. Kontrol Paneli"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#333"
+                    android:layout_marginBottom="12dp" />
+
+                <Button
+                    android:id="@+id/btnSendData"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="📤 Alan Verilerini Gönder"
+                    android:textSize="16sp"
+                    android:textColor="#FFFFFF"
+                    android:background="#FF9800"
+                    android:layout_marginBottom="8dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btnStartGrazing"
+                        android:layout_width="0dp"
+                        android:layout_height="56dp"
+                        android:layout_weight="1"
+                        android:text="🌾 Otlamayı Başlat"
+                        android:textSize="14sp"
+                        android:textColor="#FFFFFF"
+                        android:background="#4CAF50"
+                        android:layout_marginEnd="8dp" />
+
+                    <Button
+                        android:id="@+id/btnStartReturn"
+                        android:layout_width="0dp"
+                        android:layout_height="56dp"
+                        android:layout_weight="1"
+                        android:text="🏠 Geri Dön"
+                        android:textSize="14sp"
+                        android:textColor="#FFFFFF"
+                        android:background="#FF5722" />
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- 🐑 4. BÖLÜM: GERÇEK ZAMANLI TAKİP -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardElevation="4dp"
+            app:cardCornerRadius="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="🐑 4. Gerçek Zamanlı Takip"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#333"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/txtAnimalStats"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Toplam: 0 | Sınır İçi: 0 | Uyarı: 0"
+                    android:textSize="14sp"
+                    android:textColor="#666"
+                    android:layout_marginBottom="12dp" />
+
+                <!-- Hayvan Listesi -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvAnimalList"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:background="#f5f5f5"
+                    android:padding="4dp"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/txtNoAnimals"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:gravity="center"
+                    android:text="Henüz hayvan verisi alınmadı\n\nESP32'lerden GPS verisi geldiğinde burada görünecek"
+                    android:textColor="#999"
+                    android:textSize="13sp"
+                    android:visibility="visible"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Google Maps Fragment -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="📍 Canlı Harita"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#333"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp" />
+
+                <WebView
+                    android:id="@+id/webViewMap"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:background="#f0f0f0" />
+
+                <TextView
+                    android:id="@+id/txtMapInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="💡 Harita yükleniyor..."
+                    android:textSize="12sp"
+                    android:textColor="#666"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:layout_marginTop="8dp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Alt Bilgi -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="© 2026 Siber Çoban - TÜBİTAK 2204"
+            android:textSize="11sp"
+            android:textColor="#999"
+            android:gravity="center"
+            android:padding="16dp" />
+    </LinearLayout>
+</ScrollView>

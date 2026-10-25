@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siber Çoban - Canlı Harita</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body,
+        html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+
+        .info-overlay {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 8px 16px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            font-size: 13px;
+            color: #333;
+            z-index: 1000;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+    <div id="infoOverlay" class="info-overlay">Bağlantı bekleniyor...</div>
+
+    <script>
+        let map;
+        let animalMarkers = {};
+        let grazingPolygons = [];
+        let barnMarkers = [];
+
+        function initMap() {
+            // Default location (Turkey center)
+            const defaultCenter = { lat: 39.0, lng: 35.0 };
+
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: defaultCenter,
+                zoom: 6,
+                mapTypeId: google.maps.MapTypeId.HYBRID,
+                mapTypeControl: true,
+                streetViewControl: false,
+                fullscreenControl: false,
+                zoomControl: true
+            });
+
+            console.log('Live map initialized');
+        }
+
+        /**
+         * Android'den çağrılır: Senaryo verilerini yükle (ahırlar ve otlak alanları)
+         */
+        function loadScenario(jsonString) {
+            try {
+                const data = JSON.parse(jsonString);
+                console.log('Loading scenario...', data);
+
+                // Mevcut marker ve polygon'ları temizle
+                barnMarkers.forEach(marker => marker.setMap(null));
+                grazingPolygons.forEach(polygon => polygon.setMap(null));
+                barnMarkers = [];
+                grazingPolygons = [];
+
+                // Grazing areas (otlak alanları) çiz
+                if (data.grazingAreas && data.grazingAreas.length > 0) {
+                    const bounds = new google.maps.LatLngBounds();
+
+                    data.grazingAreas.forEach(areaData => {
+                        const path = areaData.points.map(p => ({ lat: p.lat, lng: p.lng }));
+
+                        const polygon = new google.maps.Polygon({
+                            paths: path,
+                            strokeColor: '#38ef7d',
+                            strokeOpacity: 0.8,
+                            strokeWeight: 2,
+                            fillColor: '#38ef7d',
+                            fillOpacity: 0.2,
+                            map: map
+                        });
+
+                        grazingPolygons.push(polygon);
+
+                        // Bounds'u genişlet
+                        path.forEach(point => bounds.extend(point));
+                    });
+
+                    // Haritayı alan sınırlarına fit et
+                    map.fitBounds(bounds);
+                }
+
+                // Barnları göster (eğer varsa)
+                if (data.barns && data.barns.length > 0) {
+                    data.barns.forEach(barnData => {
+                        const marker = new google.maps.Marker({
+                            position: barnData.position,
+                            map: map,
+                            icon: {
+                                url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+                                scaledSize: new google.maps.Size(32, 32)
+                            },
+                            title: barnData.name || 'Ahır'
+                        });
+                        barnMarkers.push(marker);
+                    });
+                }
+
+                console.log('Scenario loaded successfully');
+                return 'OK';
+            } catch (e) {
+                console.error('Load scenario error:', e);
+                return 'ERROR: ' + e.message;
+            }
+        }
+
+        /**
+         * Android'den çağrılır: Hayvan konumunu güncelle
+         */
+        function updateAnimalLocation(deviceId, lat, lng, status, type) {
+            if (!map) {
+                console.warn('Map not initialized yet');
+                return;
+            }
+
+            status = status || 'UNKNOWN';
+            type = type || 'sheep';
+
+            const iconData = getAnimalIcon(status, type);
+
+            if (!animalMarkers[deviceId]) {
+                // Yeni marker oluştur
+                const marker = new google.maps.Marker({
+                    position: { lat, lng },
+                    map: map,
+                    icon: iconData,
+                    title: `${deviceId} (${type})`,
+                    animation: google.maps.Animation.DROP
+                });
+
+                animalMarkers[deviceId] = {
+                    marker: marker,
+                    lastUpdate: Date.now(),
+                    status: status,
+                    type: type
+                };
+
+                console.log('New animal marker added:', deviceId, lat, lng);
+            } else {
+                // Mevcut marker'ı güncelle
+                animalMarkers[deviceId].marker.setPosition({ lat, lng });
+                animalMarkers[deviceId].marker.setIcon(iconData);
+                animalMarkers[deviceId].lastUpdate = Date.now();
+                animalMarkers[deviceId].status = status;
+                animalMarkers[deviceId].type = type;
+
+                console.log('Animal marker updated:', deviceId, lat, lng);
+            }
+
+            // İlk hayvan geldiğinde map'i ona odakla
+            if (Object.keys(animalMarkers).length === 1) {
+                map.setCenter({ lat, lng });
+                map.setZoom(17);
+            }
+        }
+
+        /**
+         * Hayvan ikonu oluştur (SVG tabanlı)
+         */
+        function getAnimalIcon(status, type) {
+            let fillColor = '#3399ff'; // Mavi (Normal/Unknown)
+
+            if (status === 'OUTSIDE') fillColor = '#ff3333'; // Kırmızı
+            else if (status === 'WARNING') fillColor = '#ff9933'; // Turuncu
+            else if (status === 'INSIDE') fillColor = '#33cc33'; // Yeşil
+
+            let emoji = '🐑';
+            if (type === 'cow') emoji = '🐄';
+            else if (type === 'goat') emoji = '🐐';
+            else if (type === 'sheep') emoji = '🐑';
+
+            return {
+                url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+                        <circle cx="24" cy="24" r="20" fill="${fillColor}" stroke="white" stroke-width="2" />
+                        <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-size="24">${emoji}</text>
+                    </svg>
+                `),
+                scaledSize: new google.maps.Size(48, 48),
+                anchor: new google.maps.Point(24, 24)
+            };
+        }
+
+        /**
+         * Belirli bir hayvana odaklan
+         */
+        function focusOnAnimal(deviceId, lat, lng) {
+            if (!map) return;
+
+            map.setCenter({ lat, lng });
+            map.setZoom(19);
+
+            if (animalMarkers[deviceId] && animalMarkers[deviceId].marker) {
+                animalMarkers[deviceId].marker.setAnimation(google.maps.Animation.BOUNCE);
+                setTimeout(() => {
+                    if (animalMarkers[deviceId] && animalMarkers[deviceId].marker) {
+                        animalMarkers[deviceId].marker.setAnimation(null);
+                    }
+                }, 2000);
+            }
+        }
+
+        /**
+         * Sınır kontrolü (Polygon içinde mi?)
+         */
+        function checkBoundary(lat, lng, barnId) {
+            if (grazingPolygons.length === 0) {
+                console.warn('No grazing area defined');
+                return true; // Eğer alan yoksa her zaman true döndür
+            }
+
+            const point = new google.maps.LatLng(lat, lng);
+
+            // İlk polygon'u kontrol et (genelde tek otlak alanı var)
+            const isInside = google.maps.geometry.poly.containsLocation(point, grazingPolygons[0]);
+
+            console.log('Boundary check:', lat, lng, 'inside:', isInside);
+            return isInside;
+        }
+
+        /**
+         * Tüm hayvan marker'larını temizle
+         */
+        function clearAllAnimals() {
+            Object.keys(animalMarkers).forEach(deviceId => {
+                if (animalMarkers[deviceId].marker) {
+                    animalMarkers[deviceId].marker.setMap(null);
+                }
+            });
+            animalMarkers = {};
+        }
+
+        // Sayfa yüklendiğinde
+        window.onload = function () {
+            console.log('Live map page loaded, waiting for Google Maps API...');
+        };
+    </script>
+
+    <!-- Google Maps API with geometry library for boundary checking - [TR] Lütfen "YOUR_GOOGLE_MAPS_API_KEY_HERE" kısmına kendi Google Maps API anahtarınızı yerleştirin. / [EN] Please replace "YOUR_GOOGLE_MAPS_API_KEY_HERE" with your own Google Maps API key. -->
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY_HERE&callback=initMap&libraries=geometry">
+        </script>
+</body>
+
+</html>

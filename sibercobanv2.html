@@ -1,0 +1,2365 @@
+<!DOCTYPE html>
+<html lang="tr">
+<!--
+    ╔═══════════════════════════════════════════════════════════════════════╗
+    ║              SİBER ÇOBAN / CYBER SHEPHERD SİMÜLASYONU                 ║
+    ║              AKILLI HAYVAN TAKİP VE OTLATMA SİSTEMİ                   ║
+    ╚═══════════════════════════════════════════════════════════════════════╝
+ 
+-->
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siber Çoban - Dinamik Koridorlu Sürü Simülasyonu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        #container {
+            display: flex;
+            height: 100%;
+            width: 100%;
+        }
+
+        #sidebar {
+            width: 350px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            overflow-y: auto;
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        #map {
+            flex: 1;
+            position: relative;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 24px;
+            margin-bottom: 10px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* TÜBİTAK Badge */
+        .tubitak-badge {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin: 10px 15px 15px 15px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(231, 76, 60, 0.3);
+            font-size: 10px;
+            line-height: 1.5;
+        }
+
+        .tubitak-badge strong {
+            display: block;
+            font-size: 11px;
+            margin-bottom: 5px;
+        }
+
+        .author-info {
+            text-align: center;
+            color: #764ba2;
+            font-size: 13px;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .author-email {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .author-email:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 18px;
+            margin: 20px 0 10px 0;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 5px;
+        }
+
+        .section {
+            margin-bottom: 25px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .mode-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .mode-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .mode-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .input-group {
+            margin-bottom: 12px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="time"],
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .animal-inputs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .animal-input {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .animal-input label {
+            font-size: 24px;
+            margin-bottom: 2px;
+        }
+
+        .animal-input input {
+            width: 100%;
+            padding: 6px;
+            text-align: center;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(56, 239, 125, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(235, 51, 73, 0.4);
+        }
+
+        .barn-list,
+        .grazing-list {
+            margin-top: 10px;
+        }
+
+        .barn-item,
+        .grazing-item {
+            background: #f8f9fa;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+        }
+
+        .barn-item h4 {
+            color: #667eea;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .barn-item p,
+        .grazing-item p {
+            font-size: 12px;
+            color: #666;
+            margin: 3px 0;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 5px;
+            margin-top: 8px;
+        }
+
+        .item-actions button {
+            flex: 1;
+            padding: 6px;
+            font-size: 12px;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .controls button {
+            padding: 15px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .speed-control {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .speed-btn {
+            flex: 1;
+            padding: 8px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .speed-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .status {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .status h3 {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .status p {
+            font-size: 14px;
+            margin: 5px 0;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .legend {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+        }
+
+        .legend-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .btn-primary:active,
+        .btn-success:active {
+            animation: pulse 0.3s ease;
+        }
+
+        /* Scrollbar styling */
+        #sidebar::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #sidebar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        #sidebar::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+        }
+
+        .disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(240, 147, 251, 0.4);
+        }
+
+        .btn-warning:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Yanıp sönen uyarı mesajı */
+        .warning-overlay {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 0, 0, 0.9);
+            color: white;
+            padding: 20px 40px;
+            border-radius: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            z-index: 10000;
+            animation: flash 0.5s infinite;
+            display: none;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(255, 0, 0, 0.5);
+        }
+
+        @keyframes flash {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        /* Rapor modal */
+        .report-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10001;
+        }
+
+        .report-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 50px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 500px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .report-content h2 {
+            color: white;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .report-content p {
+            font-size: 16px;
+            margin: 10px 0;
+            text-align: left;
+        }
+
+        .report-content .report-value {
+            font-weight: bold;
+            color: #38ef7d;
+        }
+
+        .report-btn {
+            margin-top: 25px;
+            padding: 15px 50px;
+            font-size: 18px;
+            background: #38ef7d;
+            color: #333;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .report-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(56, 239, 125, 0.4);
+        }
+
+        /* 📱 MOBİL RESPONSIVE - Telefon için */
+        @media (max-width: 768px) {
+            #container {
+                flex-direction: column;
+            }
+
+            #sidebar {
+                width: 100%;
+                max-height: 40vh;
+                position: relative;
+                z-index: 1000;
+                overflow-y: auto;
+            }
+
+            #map {
+                height: 60vh;
+                width: 100%;
+            }
+
+            h1 {
+                font-size: 18px;
+            }
+
+            .controls {
+                grid-template-columns: 1fr;
+            }
+
+            .controls button {
+                padding: 12px;
+                font-size: 14px;
+            }
+
+            .barn-item,
+            .grazing-item {
+                padding: 8px;
+            }
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            z-index: 20000;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-spinner {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #3498db;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-text {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">ESP32 Dosyası Gönderiliyor...</div>
+    </div>
+    <div id="container">
+        <div id="sidebar">
+            <h1>🐑 Arda Özkul Siber Çoban</h1>
+
+            <div class="tubitak-badge">
+                <strong>🏆 TÜBİTAK 2204 Araştırma Proje Yarışması</strong>
+                📚 Lise Kategorisi<br>
+                🌾 Tema: Tarım ve Hayvancılık Teknolojileri
+            </div>
+
+            <div class="author-info">
+                <div>Geliştirici: <strong>Arda Özkul</strong></div>
+                <div><strong>Siber Çoban / Cyber Shepherd</strong></div>
+            </div>
+
+            <div class="info-box">
+                <strong>Kullanım:</strong><br>
+                1. Harita modunu seçin ve haritaya tıklayarak ahır/otlatma alanı ekleyin<br>
+                2. Zamanları ayarlayın<br>
+                3. Simülasyonu başlatın
+            </div>
+
+            <!-- MOD SEÇİMİ -->
+            <div class="section">
+                <h2>Harita Modu</h2>
+                <div class="mode-selector">
+                    <button class="mode-btn active" onclick="setMode('idle', event)">👆 Seçim</button>
+                    <button class="mode-btn" onclick="setMode('barn', event)">🏠 Ahır</button>
+                    <button class="mode-btn" onclick="setMode('grazing', event)">🌾 Otlak</button>
+                </div>
+            </div>
+
+            <!-- AHIR EKLEME -->
+            <div class="section">
+                <h2>Yeni Ahır Ekle</h2>
+                <div class="input-group">
+                    <label>Hayvan Sayıları</label>
+                    <div class="animal-inputs">
+                        <div class="animal-input">
+                            <label>🐑</label>
+                            <input type="number" id="sheepCount" min="0" value="10">
+                        </div>
+                        <div class="animal-input">
+                            <label>🐐</label>
+                            <input type="number" id="goatCount" min="0" value="5">
+                        </div>
+                        <div class="animal-input">
+                            <label>🐄</label>
+                            <input type="number" id="cowCount" min="0" value="3">
+                        </div>
+                    </div>
+                </div>
+                <p style="font-size: 12px; color: #666; margin-top: 8px;">
+                    Haritaya tıklayarak ahır ekleyin
+                </p>
+                <div id="barnList" class="barn-list"></div>
+            </div>
+
+            <!-- OTLATMA SAHASI -->
+            <div class="section">
+                <h2>Otlatma Sahası</h2>
+                <p style="font-size: 12px; color: #666; margin-bottom: 10px;">
+                    Haritaya tıklayarak alan çizin (3+ nokta)
+                </p>
+                <div id="grazingList" class="grazing-list"></div>
+            </div>
+
+            <!-- SİMÜLASYON HIZI -->
+            <div class="section">
+                <h2>Simülasyon Hızı</h2>
+                <div class="input-group">
+                    <div class="speed-control">
+                        <button class="speed-btn active" onclick="setSpeed(1, event)">1x</button>
+                        <button class="speed-btn" onclick="setSpeed(10, event)">10x</button>
+                        <button class="speed-btn" onclick="setSpeed(50, event)">50x</button>
+                        <button class="speed-btn" onclick="setSpeed(100, event)">100x</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Simülasyon Kontrol</h2>
+                <div class="controls">
+                    <button class="btn btn-success" onclick="startSimulation()">▶ Başlat</button>
+                    <button class="btn btn-primary" onclick="pauseSimulation()">⏸ Duraklat</button>
+                    <button class="btn btn-danger" onclick="resetSimulation()">🔄 Sıfırla</button>
+                    <button id="returnBtn" class="btn btn-warning" onclick="manualReturnToBarns()" disabled>🏠 Ahıra
+                        Dön</button>
+                </div>
+            </div>
+
+            <!-- DURUM BİLGİSİ -->
+            <div class="status">
+                <h3>Durum</h3>
+                <p id="statusText">Hazır</p>
+                <p id="timeText">Sim Zamanı: --:--</p>
+                <p id="phaseText">Aşama: Bekleniyor</p>
+                <p id="animalCountText" style="font-size: 16px; margin-top: 8px;">🐑 0 | 🐐 0 | 🐄 0</p>
+            </div>
+
+            <!-- LEGEND -->
+            <div class="section">
+                <h2>Açıklama</h2>
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-icon" style="background: #4285F4;"></div>
+                        <span>Ahır</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-icon" style="background: #34A853;"></div>
+                        <span>Otlak</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-icon" style="background: #FBBC04;"></div>
+                        <span>Koridor</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-icon" style="background: #EA4335;"></div>
+                        <span>Sanal Çit</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ESP32 EXPORT (YENİ EKLENDİ - MEVCUT KODA DOKUNULMADI) -->
+            <div class="section">
+                <h2>📤 ESP32'ye Aktar</h2>
+                <p style="font-size: 12px; color: #666; margin-bottom: 10px;">
+                    Ahır ve otlatma alanı bilgilerini ESP32 için dosya olarak oluşturun
+                </p>
+                <button class="btn btn-primary" onclick="exportForESP32()">📱 ESP32 Dosyası Oluştur</button>
+            </div>
+        </div>
+
+        <div id="map"></div>
+    </div>
+
+    <!-- Uyarı Overlay -->
+    <div id="warningOverlay" class="warning-overlay">
+        ⚠️ Dikkat! Dinamik çit daralıyor!
+    </div>
+
+    <!-- Gün Sonu Raporu Modal -->
+    <div id="reportModal" class="report-modal">
+        <div class="report-content">
+            <h2>📊 Gün Sonu Raporu</h2>
+            <p>🐑 Toplam Koyun: <span id="reportSheep" class="report-value">0</span></p>
+            <p>🐐 Toplam Keçi: <span id="reportGoat" class="report-value">0</span></p>
+            <p>🐄 Toplam İnek: <span id="reportCow" class="report-value">0</span></p>
+            <p>⏱️ Yayılma Süresi: <span id="reportDuration" class="report-value">0</span> dakika</p>
+            <p>📅 Simülasyon Zamanı: <span id="reportTime" class="report-value">--:--</span></p>
+            <p style="margin-top: 20px; color: #38ef7d;">✅ Tüm hayvanlar güvenle ahırlarına döndü!</p>
+            <div style="display: flex; gap: 10px; margin-top: 25px;">
+                <button class="report-btn" onclick="startNewSimulation()"
+                    style="flex: 1; background: #667eea; color: white;">🔄 Yeni Simülasyon</button>
+                <button class="report-btn" onclick="closeReport()" style="flex: 1;">� İptal</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // GLOBAL DEĞİŞKENLER
+        // ==========================================
+
+        let map;
+        let currentMode = 'idle'; // idle, barn, grazing
+        let barns = [];
+        let grazingAreas = [];
+        let selectedGrazingArea = null;
+        let animals = [];
+        let simulationSpeed = 1; // 1x, 10x, 50x, 100x
+        let simulationRunning = false;
+        let simulationPaused = false;
+        let currentSimTime = null; // Simülasyon zamanı (dakika cinsinden)
+        let simulationPhase = 'idle'; // idle, collecting, grazing, gathering, returning
+        let grazingStartTimestamp = 0; // Otlama başlangıç zamanı
+        let grazingRealStartTime = 0; // Gerçek zamanlı otlama başlangıcı
+        let canReturn = false; // Geri dönüşe izin var mı? (Real-time safeguard)
+
+        // Rapor için değişkenler
+        let simulationStartRealTime = 0; // Simülasyon başlangıç zamanı (real)
+        let totalSheep = 0;
+        let totalGoats = 0;
+        let totalCows = 0;
+
+        // Gathering (Daralma) fazı değişkenleri
+        let gatheringStartTime = 0; // Daralma başlangıç zamanı (Date.now)
+        let shrinkingPolygonVisual = null; // Daralan polygon görseli
+        let currentShrinkScale = 1.0; // Mevcut daralma ölçeği
+        let targetShrinkScale = 0.1; // Hedef daralma ölçeği (hayvan sayısına göre hesaplanır)
+
+        // Hayvan cinsi başına kapladığı alan (metre kare)
+        const ANIMAL_FOOTPRINT = {
+            sheep: 0.5,  // 0.5 m² koyun
+            goat: 0.6,   // 0.6 m² keçi
+            cow: 2.0     // 2.0 m² inek
+        };
+        const FOOTPRINT_MULTIPLIER = 1.5; // 1.5 kat boşluk
+
+        let corridorPolylines = [];
+        let fencePolylines = [];
+        let currentPath = [];
+        let currentBarnIndex = 0;
+        let grazingPolygon = null;
+
+        const ANIMAL_SPEED = 0.5; // km/saat (otlama alanında çok yavaş hareket)
+        const CORRIDOR_WIDTH = 150; // metre (hayvanların rahatça sığabileceği genişlikte)
+
+        // Harita başlangıç konumu (Kullanıcı tarafından belirlenen konum)
+        const DEFAULT_CENTER = { lat: 36.8910985, lng: 34.571153 };
+
+        // ==========================================
+        // HARİTA İNİT
+        // ==========================================
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: DEFAULT_CENTER,
+                zoom: 18,  // 312m yakınlık için uygun zoom seviyesi
+                mapTypeId: 'satellite',
+                mapTypeControl: true,
+                streetViewControl: false,
+                fullscreenControl: true
+            });
+
+            // Harita tıklama olayı
+            map.addListener('click', handleMapClick);
+
+            updateUI();
+        }
+
+        // ==========================================
+        // MOD VE HIZ KONTROLÜ
+        // ==========================================
+
+        function setMode(mode, event) {
+            currentMode = mode;
+
+            // Tüm butonlardan active class'ını kaldır
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Seçili butona active ekle (eğer event varsa)
+            if (event && event.target) {
+                event.target.classList.add('active');
+            } else {
+                // Manuel mod değişikliği - idle modunu aktif et
+                document.querySelectorAll('.mode-btn').forEach(btn => {
+                    if (btn.textContent.includes('Seçim')) {
+                        btn.classList.add('active');
+                    }
+                });
+            }
+
+            // Eğer grazing modu seçili değilse, çizim modunu kapat
+            if (mode !== 'grazing' && window.currentDrawingManager) {
+                window.currentDrawingManager.setMap(null);
+                window.currentDrawingManager = null;
+            }
+
+            // Grazing modu için çizim aracını aktif et
+            if (mode === 'grazing') {
+                enableDrawingMode();
+            }
+        }
+
+        function setSpeed(speed, event) {
+            simulationSpeed = speed;
+
+            // Speed butonlarını güncelle
+            document.querySelectorAll('.speed-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
+        }
+
+        // ==========================================
+        // HARİTA TIKLAMA İŞLEMİ
+        // ==========================================
+
+        function handleMapClick(event) {
+            const lat = event.latLng.lat();
+            const lng = event.latLng.lng();
+
+            if (currentMode === 'barn') {
+                addBarn(lat, lng);
+            }
+        }
+
+        // ==========================================
+        // AHIR EKLEME
+        // ==========================================
+
+        function addBarn(lat, lng) {
+            const sheep = parseInt(document.getElementById('sheepCount').value) || 0;
+            const goats = parseInt(document.getElementById('goatCount').value) || 0;
+            const cows = parseInt(document.getElementById('cowCount').value) || 0;
+
+            if (sheep === 0 && goats === 0 && cows === 0) {
+                alert('En az bir hayvan türü için sayı girin!');
+                return;
+            }
+
+            // Otomatik sıra numarası - mevcut ahır sayısı + 1
+            const order = barns.length + 1;
+
+            const barn = {
+                id: Date.now(),
+                position: { lat, lng },
+                order: order,
+                animals: { sheep, goats, cows },
+                marker: null
+            };
+
+            // Haritaya marker ekle
+            barn.marker = new google.maps.Marker({
+                position: { lat, lng },
+                map: map,
+                icon: {
+                    path: google.maps.SymbolPath.CIRCLE,
+                    scale: 15,
+                    fillColor: '#4285F4',
+                    fillOpacity: 1,
+                    strokeColor: '#ffffff',
+                    strokeWeight: 3
+                },
+                label: {
+                    text: order.toString(),
+                    color: 'white',
+                    fontWeight: 'bold',
+                    fontSize: '14px'
+                },
+                title: `Ahır ${order}`
+            });
+
+            barns.push(barn);
+
+            updateUI();
+        }
+
+        // ==========================================
+        // OTLATMA ALANI ÇİZİMİ
+        // ==========================================
+
+        let currentDrawingManager = null;
+        let tempGrazingPath = [];
+
+        function enableDrawingMode() {
+            // Önceki çizim aracını temizle
+            if (currentDrawingManager) {
+                currentDrawingManager.setMap(null);
+            }
+
+            // Yeni çizim aracı oluştur
+            currentDrawingManager = new google.maps.drawing.DrawingManager({
+                drawingMode: google.maps.drawing.OverlayType.POLYGON,
+                drawingControl: false,
+                polygonOptions: {
+                    fillColor: '#34A853',
+                    fillOpacity: 0.3,
+                    strokeColor: '#34A853',
+                    strokeWeight: 3,
+                    editable: false,
+                    draggable: false
+                }
+            });
+
+            currentDrawingManager.setMap(map);
+
+            // Çizim tamamlandığında
+            google.maps.event.addListener(currentDrawingManager, 'overlaycomplete', function (event) {
+                if (event.type === 'polygon') {
+                    const polygon = event.overlay;
+                    const path = polygon.getPath();
+                    const coordinates = [];
+
+                    for (let i = 0; i < path.getLength(); i++) {
+                        const point = path.getAt(i);
+                        coordinates.push({ lat: point.lat(), lng: point.lng() });
+                    }
+
+                    if (coordinates.length >= 3) {
+                        addGrazingArea(coordinates, polygon);
+                    }
+
+                    // Çizim modunu kapat ve idle moda geç
+                    currentDrawingManager.setDrawingMode(null);
+                    currentMode = 'idle';
+                    document.querySelectorAll('.mode-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                        if (btn.textContent.includes('Seçim')) {
+                            btn.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }
+
+        function addGrazingArea(coordinates, polygon) {
+            const area = {
+                id: Date.now(),
+                coordinates: coordinates,
+                polygon: polygon
+            };
+
+            grazingAreas.push(area);
+
+            // İlk alan otomatik seçili olsun
+            if (grazingAreas.length === 1) {
+                selectedGrazingArea = area;
+            }
+
+            updateUI();
+        }
+
+        // ==========================================
+        // UI GÜNCELLEME
+        // ==========================================
+
+        function updateUI() {
+            // Ahır listesini güncelle
+            const barnList = document.getElementById('barnList');
+            barnList.innerHTML = '';
+
+            // Ahırları sıraya göre sırala
+            const sortedBarns = [...barns].sort((a, b) => a.order - b.order);
+
+            sortedBarns.forEach(barn => {
+                const div = document.createElement('div');
+                div.className = 'barn-item';
+                div.innerHTML = `
+                    <h4>Ahır #${barn.order}</h4>
+                    <p>🐑 ${barn.animals.sheep} | 🐐 ${barn.animals.goats} | 🐄 ${barn.animals.cows}</p>
+                    <div class="item-actions">
+                        <button class="btn btn-danger" onclick="deleteBarn(${barn.id})" style="margin-top: 0;">Sil</button>
+                    </div>
+                `;
+                barnList.appendChild(div);
+            });
+
+            // Otlatma alanı listesini güncelle
+            const grazingList = document.getElementById('grazingList');
+            grazingList.innerHTML = '';
+
+            grazingAreas.forEach((area, index) => {
+                const div = document.createElement('div');
+                div.className = 'grazing-item';
+                const isSelected = selectedGrazingArea && selectedGrazingArea.id === area.id;
+                div.innerHTML = `
+                    <p>Otlak Alan ${index + 1} ${isSelected ? '✓ (Seçili)' : ''}</p>
+                    <div class="item-actions">
+                        <button class="btn btn-primary" onclick="selectGrazingArea(${area.id})" style="margin-top: 0;">Seç</button>
+                        <button class="btn btn-danger" onclick="deleteGrazingArea(${area.id})" style="margin-top: 0;">Sil</button>
+                    </div>
+                `;
+                grazingList.appendChild(div);
+            });
+        }
+
+        function deleteBarn(id) {
+            const barn = barns.find(b => b.id === id);
+            if (barn && barn.marker) {
+                barn.marker.setMap(null);
+            }
+            barns = barns.filter(b => b.id !== id);
+            updateUI();
+        }
+
+        function selectGrazingArea(id) {
+            selectedGrazingArea = grazingAreas.find(a => a.id === id);
+            updateUI();
+        }
+
+        function deleteGrazingArea(id) {
+            const area = grazingAreas.find(a => a.id === id);
+            if (area && area.polygon) {
+                area.polygon.setMap(null);
+            }
+            grazingAreas = grazingAreas.filter(a => a.id !== id);
+            if (selectedGrazingArea && selectedGrazingArea.id === id) {
+                selectedGrazingArea = grazingAreas.length > 0 ? grazingAreas[0] : null;
+            }
+            updateUI();
+        }
+
+        // ==========================================
+        // SİMÜLASYON KONTROLÜ
+        // ==========================================
+
+        function startSimulation() {
+            // Kontroller
+            if (barns.length === 0) {
+                alert('En az bir ahır ekleyin!');
+                return;
+            }
+
+            if (!selectedGrazingArea) {
+                alert('Bir otlatma alanı seçin!');
+                return;
+            }
+
+            if (simulationRunning && !simulationPaused) {
+                console.log('Simülasyon zaten çalışıyor!');
+                return;
+            }
+
+            if (simulationPaused) {
+                simulationPaused = false;
+                updateStatus('Simülasyon devam ediyor...', 'collecting');
+                return;
+            }
+
+            // Simülasyonu başlat
+            simulationRunning = true;
+            simulationPaused = false;
+            simulationPhase = 'collecting';
+
+            // Başlangıç zamanını al (varsayılan 07:00)
+            const startTime = '07:00';
+            const [hours, minutes] = startTime.split(':').map(Number);
+            currentSimTime = hours * 60 + minutes; // Dakika cinsinden
+
+            // Rapor için gerçek başlangıç zamanını kaydet
+            simulationStartRealTime = Date.now();
+
+            // Ahırları sıraya göre düzenle
+            const sortedBarns = [...barns].sort((a, b) => a.order - b.order);
+            currentBarnIndex = 0;
+
+            // Hayvanları oluştur
+            createAnimalsFromBarns(sortedBarns);
+
+            // İlk ahırdan başla
+            updateStatus('Simülasyon başlatıldı - Hayvanlar toplanıyor', 'collecting');
+
+            // Sinyal Gönderildi Uyarısı
+            // Log instead of alert
+            console.log("ESP32: Yayılma Başlatıldı (Sinyal Gönderildi)");
+
+            // Ana simülasyon döngüsünü başlat
+            startSimulationLoop();
+        }
+
+        function pauseSimulation() {
+            if (!simulationRunning) {
+                alert('Simülasyon çalışmıyor!');
+                return;
+            }
+
+            simulationPaused = !simulationPaused;
+
+            if (simulationPaused) {
+                updateStatus('Simülasyon duraklatıldı', simulationPhase);
+            } else {
+                updateStatus('Simülasyon devam ediyor', simulationPhase);
+            }
+        }
+
+        function resetSimulation() {
+            simulationRunning = false;
+            simulationPaused = false;
+            simulationPhase = 'idle';
+            currentSimTime = null;
+            currentBarnIndex = 0;
+
+            // Tüm hayvanları temizle
+            animals.forEach(animal => {
+                if (animal.marker) {
+                    animal.marker.setMap(null);
+                }
+            });
+            animals = [];
+
+            // Koridorları temizle
+            corridorPolylines.forEach(line => line.setMap(null));
+            corridorPolylines = [];
+
+            fencePolylines.forEach(line => line.setMap(null));
+            fencePolylines = [];
+
+            if (grazingPolygon) {
+                grazingPolygon.setMap(null);
+                grazingPolygon = null;
+            }
+
+            updateStatus('Simülasyon sıfırlandı', 'idle');
+        }
+
+        // ==========================================
+        // HAYVAN OLUŞTURMA
+        // ==========================================
+
+        function createAnimalsFromBarns(sortedBarns) {
+            animals = [];
+
+            sortedBarns.forEach((barn, barnIndex) => {
+                // Koyunlar
+                for (let i = 0; i < barn.animals.sheep; i++) {
+                    animals.push(createAnimal(barn.position, 'sheep', barnIndex));
+                }
+
+                // Keçiler
+                for (let i = 0; i < barn.animals.goats; i++) {
+                    animals.push(createAnimal(barn.position, 'goat', barnIndex));
+                }
+
+                // Sığırlar
+                for (let i = 0; i < barn.animals.cows; i++) {
+                    animals.push(createAnimal(barn.position, 'cow', barnIndex));
+                }
+            });
+        }
+
+        function createAnimal(position, type, barnIndex) {
+            // Ahır etrafına rastgele dağıt (başlangıçta ahırda)
+            const offset = 0.0001;
+            const randomLat = position.lat + (Math.random() - 0.5) * offset;
+            const randomLng = position.lng + (Math.random() - 0.5) * offset;
+
+            const icons = {
+                sheep: '🐑',
+                goat: '🐐',
+                cow: '🐄'
+            };
+
+            const animal = {
+                id: Date.now() + Math.random(),
+                type: type,
+                barnIndex: barnIndex, // Hangi ahırdan geldiği
+                position: { lat: randomLat, lng: randomLng },
+                targetPosition: null,
+                marker: null,
+                visible: false // Başlangıçta görünmez, sırası gelince görünür olacak
+            };
+
+            // Marker'ı oluştur ama henüz haritaya ekleme
+            animal.marker = new google.maps.Marker({
+                position: { lat: randomLat, lng: randomLng },
+                map: null, // Başlangıçta null
+                icon: {
+                    url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30">
+                            <text x="15" y="22" font-size="20" text-anchor="middle">${icons[type]}</text>
+                        </svg>
+                    `),
+                    scaledSize: new google.maps.Size(30, 30)
+                },
+                zIndex: 1000
+            });
+
+            return animal;
+        }
+
+        // ==========================================
+        // SİMÜLASYON DÖNGÜSÜ
+        // ==========================================
+
+        let lastUpdateTime = Date.now();
+
+        function startSimulationLoop() {
+            lastUpdateTime = Date.now();
+            requestAnimationFrame(simulationLoop);
+        }
+
+        function simulationLoop() {
+            if (!simulationRunning) return;
+
+            if (!simulationPaused) {
+                const now = Date.now();
+                const deltaTime = (now - lastUpdateTime) / 1000; // saniye cinsinden
+                lastUpdateTime = now;
+
+                // Simülasyon zamanını güncelle (1 gerçek saniye = 1 simülasyon dakikası * hız)
+                currentSimTime += deltaTime * simulationSpeed;
+
+                // Simülasyon fazını güncelle
+                updateSimulationPhase();
+
+                // Hayvanları hareket ettir
+                updateAnimals(deltaTime);
+
+                // Koridorları güncelle
+                updateCorridors();
+
+                // UI'ı güncelle
+                updateStatusTime();
+            }
+
+            requestAnimationFrame(simulationLoop);
+        }
+
+        // ==========================================
+        // SİMÜLASYON FAZ YÖNETİMİ
+        // ==========================================
+
+        function updateSimulationPhase() {
+            // Zaman kontrolleri artık kullanılmıyor - kullanıcı manuel olarak "Ahıra Dön" düğmesine basacak
+
+            if (simulationPhase === 'collecting') {
+                // Toplama fazı - tüm ahırlar toplandı mı kontrol et
+                const sortedBarns = [...barns].sort((a, b) => a.order - b.order);
+
+                // Tüm hayvanlar otlak alanına ulaştı mı?
+                if (selectedGrazingArea) {
+                    const allInGrazing = animals.every(animal => {
+                        if (!animal.visible) return true; // Henüz serbest bırakılmamış
+                        return isPointInPolygon(animal.position, selectedGrazingArea.coordinates);
+                    });
+
+                    if (allInGrazing && animals.filter(a => a.visible).length > 0) {
+                        simulationPhase = 'grazing';
+                        grazingStartTimestamp = currentSimTime;
+                        grazingRealStartTime = Date.now(); // Real-time timestamp
+                        updateStatus('Hayvanlar otlatma alanında', 'grazing');
+
+                        // Gidiş koridorunu kapat
+                        closeIncomingCorridor();
+
+                        // Force dispersion for existing animals just in case
+                        animals.forEach(a => {
+                            if (a.visible && !a.personalTarget) {
+                                a.personalTarget = getRandomPointInPolygon(selectedGrazingArea.coordinates);
+                                a.grazingWait = Math.random() * 5000;
+                            }
+                        });
+
+                        // Safeguard
+                        canReturn = false;
+                        setTimeout(() => { canReturn = true; }, 5000);
+                    }
+                }
+            } else if (simulationPhase === 'grazing') {
+                // SINIRSIZ OTLATMA: Otomatik geri dönüş YOK
+                // Kullanıcı "Ahıra Dön" düğmesine basana kadar hayvanlar otlar
+
+                // Dönüş düğmesini aktif et
+                const returnBtn = document.getElementById('returnBtn');
+                if (returnBtn && returnBtn.disabled) {
+                    returnBtn.disabled = false;
+                }
+
+                updateStatus('Hayvanlar otluyor (Sınırsız)', 'grazing');
+            } else if (simulationPhase === 'gathering') {
+                // DARALMA FAZI: Alan hayvan hızında merkeze doğru küçülüyor
+                const returnBtn = document.getElementById('returnBtn');
+                if (returnBtn) returnBtn.disabled = true;
+
+                // Uyarı mesajını göster
+                showWarning(true);
+
+                // Daralma hızı (ANIMAL_SPEED'den bağımsız, sabit hızda daralıyor)
+                const shrinkSpeed = (3.0 / 3600) / 111 * simulationSpeed; // 3 km/saat sabit baz
+                const deltaMs = 16; // ~60fps varsayımı
+                const shrinkPerFrame = shrinkSpeed * (deltaMs / 1000) * 102.0; // 102x hızlı daralma (öncekinden %70 daha hızlı)
+
+                // Daralmayı uygula
+                if (currentShrinkScale > targetShrinkScale) {
+                    currentShrinkScale = Math.max(targetShrinkScale, currentShrinkScale - shrinkPerFrame);
+                }
+
+                // Daralan polygon'u görselleştir
+                if (selectedGrazingArea) {
+                    const shrunkPolygon = getShrunkenPolygon(selectedGrazingArea.coordinates, currentShrinkScale);
+
+                    if (!shrinkingPolygonVisual) {
+                        shrinkingPolygonVisual = new google.maps.Polygon({
+                            paths: shrunkPolygon,
+                            strokeColor: "#FF4500",
+                            strokeOpacity: 1.0,
+                            strokeWeight: 4,
+                            fillColor: "#FF4500",
+                            fillOpacity: 0.2,
+                            map: map,
+                            zIndex: 100
+                        });
+                    } else {
+                        shrinkingPolygonVisual.setPath(shrunkPolygon);
+                        shrinkingPolygonVisual.setMap(map);
+                    }
+                }
+
+                const scalePercent = Math.round(currentShrinkScale * 100);
+                const targetPercent = Math.round(targetShrinkScale * 100);
+                updateStatus(`Hayvanlar toplanıyor... [%${scalePercent} -> %${targetPercent}]`, 'gathering');
+
+                // Daralma tamamlandı mı?
+                if (currentShrinkScale <= targetShrinkScale + 0.01) {
+                    // Shrinking görselini kaldır
+                    if (shrinkingPolygonVisual) {
+                        shrinkingPolygonVisual.setMap(null);
+                        shrinkingPolygonVisual = null;
+                    }
+
+                    // Uyarıyı gizle
+                    showWarning(false);
+
+                    // Dönüş fazına geç
+                    simulationPhase = 'returning';
+                    showReturnMessage();
+                    updateStatus('Hayvanlar ahıra dönüyor...', 'returning');
+                    startReturnPhase();
+                }
+            } else if (simulationPhase === 'returning') {
+                // Dönüş düğmesini deaktif et
+                const returnBtn = document.getElementById('returnBtn');
+                if (returnBtn) returnBtn.disabled = true;
+
+                // Dönüş fazı - tüm hayvanlar ahıra döndü mü?
+                const allReturned = animals.every(animal => !animal.visible);
+
+                if (allReturned) {
+                    simulationPhase = 'completed';
+                    simulationRunning = false;
+                    updateStatus('Simülasyon tamamlandı!', 'completed');
+
+                    // Gün sonu raporunu göster
+                    showEndOfDayReport();
+                }
+            }
+        }
+
+        // Uyarı mesajını göster/gizle
+        function showWarning(show) {
+            const overlay = document.getElementById('warningOverlay');
+            if (overlay) {
+                overlay.style.display = show ? 'block' : 'none';
+            }
+        }
+
+        // Geri dönüş mesajı
+        function showReturnMessage() {
+            const overlay = document.getElementById('warningOverlay');
+            if (overlay) {
+                overlay.innerHTML = '🏠 Geri dönüş işlemi başladı!';
+                overlay.style.background = 'rgba(0, 128, 0, 0.9)';
+                overlay.style.display = 'block';
+
+                // 3 saniye sonra gizle
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                    // Orijinal mesaja geri dön
+                    overlay.innerHTML = '⚠️ Dikkat! Dinamik çit daralıyor!';
+                    overlay.style.background = 'rgba(255, 0, 0, 0.9)';
+                }, 3000);
+            }
+        }
+
+        // Gün sonu raporu
+        function showEndOfDayReport() {
+            // İstatistikleri hesapla
+            const sheepCount = animals.filter(a => a.type === 'sheep').length;
+            const goatCount = animals.filter(a => a.type === 'goat').length;
+            const cowCount = animals.filter(a => a.type === 'cow').length;
+
+            const durationMs = Date.now() - simulationStartRealTime;
+            const durationMinutes = Math.round(durationMs / 60000);
+
+            const hours = Math.floor(currentSimTime / 60);
+            const minutes = Math.floor(currentSimTime % 60);
+            const simTimeStr = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+
+            // Raporu doldur
+            document.getElementById('reportSheep').textContent = sheepCount;
+            document.getElementById('reportGoat').textContent = goatCount;
+            document.getElementById('reportCow').textContent = cowCount;
+            document.getElementById('reportDuration').textContent = durationMinutes;
+            document.getElementById('reportTime').textContent = simTimeStr;
+
+            // Modal'ı göster
+            document.getElementById('reportModal').style.display = 'flex';
+        }
+
+        // Raporu kapat
+        function closeReport() {
+            document.getElementById('reportModal').style.display = 'none';
+        }
+
+        // Yeni simülasyon başlat (rapor sonrası)
+        function startNewSimulation() {
+            // Modalı kapat
+            document.getElementById('reportModal').style.display = 'none';
+
+            // Simülasyonu sıfırla
+            resetSimulation();
+
+            // Ahırları ve otlak alanlarını temizle
+            barns.forEach(barn => {
+                if (barn.marker) {
+                    barn.marker.setMap(null);
+                }
+            });
+            barns = [];
+
+            grazingAreas.forEach(area => {
+                if (area.polygon) {
+                    area.polygon.setMap(null);
+                }
+            });
+            grazingAreas = [];
+            selectedGrazingArea = null;
+
+            // Daralan polygon'u temizle
+            if (shrinkingPolygonVisual) {
+                shrinkingPolygonVisual.setMap(null);
+                shrinkingPolygonVisual = null;
+            }
+
+            // UI'ı güncelle
+            updateUI();
+            updateStatus('Yeni simülasyon için hazır', 'idle');
+        }
+
+        function closeIncomingCorridor() {
+            // Gidiş koridorunu tamamen kapat
+            corridorPolylines.forEach(line => {
+                line.setOptions({
+                    strokeColor: '#EA4335',
+                    strokeWeight: 4
+                });
+            });
+        }
+
+        function startReturnPhase() {
+            // Dönüş başladı - tüm hayvanlar için dönüş modunu aç
+            animals.forEach(animal => {
+                animal.returning = true;
+                animal.personalTarget = null; // Mevcut hedefleri sıfırla
+            });
+        }
+
+        // Manuel dönüş fonksiyonu - Ahıra Dön düğmesi için
+        function manualReturnToBarns() {
+            if (!simulationRunning) {
+                alert('Simülasyon çalışmıyor!');
+                return;
+            }
+
+            if (simulationPhase !== 'grazing') {
+                alert('Hayvanlar henüz otlatma alanında değil!');
+                return;
+            }
+
+            // Minimum daralma ölçeğini hesapla (hayvan cinsine göre)
+            const visibleAnimals = animals.filter(a => a.visible);
+
+            // Toplam hayvan yüzölçümünü hesapla (cinsine göre 1.5 kat boşluk ile)
+            let totalFootprint = 0;
+            visibleAnimals.forEach(a => {
+                const footprint = ANIMAL_FOOTPRINT[a.type] || 1.0; // m²
+                totalFootprint += footprint * FOOTPRINT_MULTIPLIER; // 1.5x boşluk
+            });
+
+            // m² -> derece² dönüşümü (yaklaşık: 1 derece ≈ 111km)
+            const metersPerDegree = 111000;
+            const neededAreaDegrees = totalFootprint / (metersPerDegree * metersPerDegree);
+
+            const originalArea = getPolygonArea(selectedGrazingArea.coordinates);
+            targetShrinkScale = Math.max(0.02, Math.min(0.3, Math.sqrt(neededAreaDegrees / originalArea)));
+            currentShrinkScale = 1.0; // Başlangıç ölçeği
+
+            console.log(`Gathering: ${visibleAnimals.length} animals, total footprint: ${totalFootprint.toFixed(1)}m², target scale: ${(targetShrinkScale * 100).toFixed(1)}%`);
+
+            // Daralma (Gathering) fazına geç
+            simulationPhase = 'gathering';
+            gatheringStartTime = Date.now();
+            updateStatus('Hayvanlar toplanıyor...', 'gathering');
+
+            // Log to console instead of alert
+            console.log("ESP32: Geri Dönüş Sinyali Gönderildi (Yayılma Başladı)");
+
+            // Dönüş düğmesini deaktif et
+            const returnBtn = document.getElementById('returnBtn');
+            if (returnBtn) returnBtn.disabled = true;
+
+            // Hayvanların bekleme sürelerini sıfırla - hemen hareket etsinler
+            animals.forEach(a => {
+                a.grazingWait = 0;
+            });
+        }
+
+        // Polygon alanını hesapla (Shoelace formula)
+        function getPolygonArea(coordinates) {
+            let area = 0;
+            const n = coordinates.length;
+            for (let i = 0; i < n; i++) {
+                const j = (i + 1) % n;
+                area += coordinates[i].lat * coordinates[j].lng;
+                area -= coordinates[j].lat * coordinates[i].lng;
+            }
+            return Math.abs(area) / 2;
+        }
+
+        // Hayvanları grid şeklinde dağıtmak için pozisyon hesapla
+        function calculateGridPosition(index, totalCount, scale) {
+            // Spiral benzeri dağılım - hayvanlar üst üste gelmesin
+            const spacing = ANIMAL_SPACING * 2; // 2 hayvan boşluğu
+            const cols = Math.ceil(Math.sqrt(totalCount));
+            const row = Math.floor(index / cols);
+            const col = index % cols;
+
+            // Merkez etrafında dağıt
+            const offsetX = (col - cols / 2) * spacing;
+            const offsetY = (row - cols / 2) * spacing;
+
+            return {
+                lat: offsetY,
+                lng: offsetX
+            };
+        }
+
+        // ==========================================
+        // HAYVAN HAREKETİ (ANIMAL MOVEMENT)
+        // ==========================================
+
+        function updateAnimals(deltaTime) {
+            const sortedBarns = [...barns].sort((a, b) => a.order - b.order);
+
+            if (simulationPhase === 'collecting') {
+                // --- TOPLAMA FAZI ---
+
+                // 1. İLK BAŞLATMA (Barn 1)
+                if (currentBarnIndex === 0) {
+                    const visibleFirstBarn = animals.filter(a => a.barnIndex === 0 && a.visible);
+                    if (visibleFirstBarn.length === 0) {
+                        const barn1Animals = animals.filter(a => a.barnIndex === 0);
+                        barn1Animals.forEach(a => {
+                            a.visible = true;
+                            a.marker.setMap(map);
+                            a.position = getJitteredPosition(sortedBarns[0].position, 0.00005);
+                            a.marker.setPosition(a.position);
+                            // Hedefleri sıfırla
+                            a.baseTarget = null;
+                            a.personalTarget = null;
+                        });
+                        console.log(`🚀 Start: Released ${barn1Animals.length} animals from Barn 1`);
+                    }
+                }
+
+                // 2. GLOBAL HEDEFİ BELİRLE
+                let globalTargetPos = null;
+                let globalTargetName = "";
+
+                if (currentBarnIndex + 1 < sortedBarns.length) {
+                    globalTargetPos = sortedBarns[currentBarnIndex + 1].position;
+                    globalTargetName = `Barn ${currentBarnIndex + 2}`;
+                } else if (selectedGrazingArea) {
+                    globalTargetPos = getPolygonCenter(selectedGrazingArea.coordinates);
+                    globalTargetName = "Grazing Area";
+                }
+
+                // 3. SÜRÜYÜ YÖNET
+                let activeCount = 0;
+                let arrivedCount = 0;
+
+                animals.forEach(animal => {
+                    if (animal.visible && !animal.returning) {
+                        activeCount++;
+
+                        // Force Update Logic
+                        let needsUpdate = false;
+                        if (!animal.baseTarget) needsUpdate = true;
+                        else if (globalTargetPos && (animal.baseTarget.lat !== globalTargetPos.lat || animal.baseTarget.lng !== globalTargetPos.lng)) {
+                            needsUpdate = true;
+                        }
+
+                        if (needsUpdate && globalTargetPos) {
+                            animal.baseTarget = globalTargetPos;
+                            // Yolda sıkı (5m)
+                            animal.personalTarget = getJitteredPosition(globalTargetPos, 0.00005);
+                        }
+
+                        // Hareket
+                        if (animal.personalTarget) {
+                            moveAnimal(animal, deltaTime);
+                            if (getDistance(animal.position, animal.personalTarget) < 0.0002) {
+                                arrivedCount++;
+                            }
+                        }
+                    }
+                });
+
+                // 4. AŞAMA GEÇİŞİ
+                if (activeCount > 0 && arrivedCount === activeCount && globalTargetPos) {
+                    console.log(`✅ Stage Complete: Arrived at ${globalTargetName}`);
+                    currentBarnIndex++;
+
+                    if (currentBarnIndex < sortedBarns.length) {
+                        const sleepingAnimals = animals.filter(a => a.barnIndex === currentBarnIndex && !a.visible);
+                        if (sleepingAnimals.length > 0) {
+                            console.log(`🔓 Unlocking ${sleepingAnimals.length} animals from Barn ${currentBarnIndex + 1}`);
+                            sleepingAnimals.forEach(a => {
+                                a.visible = true;
+                                a.marker.setMap(map);
+                                a.position = getJitteredPosition(sortedBarns[currentBarnIndex].position, 0.00005);
+                                a.marker.setPosition(a.position);
+                            });
+                        }
+
+                        // Yeni hayvanlar için hedefleri sıfırla
+                        animals.forEach(a => {
+                            if (a.visible) {
+                                a.baseTarget = null;
+                                a.personalTarget = null;
+                            }
+                        });
+
+                    } else {
+                        console.log("🏁 Reached Grazing Area Entrance");
+
+                        // OTLATMAYA ZORLA GEÇİŞ & ANINDA DAĞILMA
+                        simulationPhase = 'grazing';
+                        grazingStartTimestamp = currentSimTime;
+                        grazingRealStartTime = Date.now(); // Real-time timestamp
+                        canReturn = false;
+                        setTimeout(() => { canReturn = true; }, 5000); // 5 saniye real-time blok
+
+                        updateStatus('Hayvanlar otluyor (Dağılıyor...)', 'grazing');
+                        closeIncomingCorridor();
+
+                        animals.forEach(a => {
+                            if (a.visible) {
+                                a.baseTarget = null;
+                                // Herkese rastgele bir nokta ata (Explosion)
+                                a.personalTarget = getRandomPointInPolygon(selectedGrazingArea.coordinates);
+                                // Simülasyon hızına göre bekleme süresi ayarla
+                                a.grazingWait = (Math.random() * 5000) / (simulationSpeed || 1);
+                            }
+                        });
+                    }
+                }
+
+            } else if (simulationPhase === 'grazing') {
+                // --- OTLATMA FAZI ---
+                // Sadece rastgele dolaşsınlar
+
+                animals.forEach(animal => {
+                    if (animal.visible && !animal.returning) {
+                        // Bekleme süresi
+                        if (animal.grazingWait && animal.grazingWait > 0) {
+                            animal.grazingWait -= deltaTime * 1000;
+                            return;
+                        }
+
+                        // Yeni Hedef
+                        if (!animal.personalTarget || getDistance(animal.position, animal.personalTarget) < 0.0001) {
+                            animal.personalTarget = getRandomPointInPolygon(selectedGrazingArea.coordinates);
+                            // Simülasyon hızına göre bekleme (Örn: 20 saniye simülasyon zamanı)
+                            if (animal.personalTarget) {
+                                animal.grazingWait = (Math.random() * 20000 + 10000) / (simulationSpeed || 1);
+                            }
+                        }
+                        moveAnimal(animal, deltaTime, 0.5); // Orta Hız (%50)
+                    }
+                });
+
+            } else if (simulationPhase === 'gathering') {
+                // --- DARALMA FAZI ---
+                // Hayvanlar serbest hareket ediyor ama daralan sınır içinde kalıyor
+
+                if (!selectedGrazingArea) return;
+
+                const effectivePolygon = getShrunkenPolygon(selectedGrazingArea.coordinates, currentShrinkScale);
+                const centerTarget = getPolygonCenter(effectivePolygon);
+
+                animals.forEach(animal => {
+                    if (animal.visible && !animal.returning) {
+
+                        // Hayvanın mevcut konumu sınır içinde mi?
+                        const isInside = isPointInPolygon(animal.position, effectivePolygon);
+
+                        if (!isInside) {
+                            // Sınır dışında - derhal merkeze doğru git
+                            animal.personalTarget = centerTarget;
+                            animal.grazingWait = 0;
+                            moveAnimal(animal, deltaTime, 1.5); // Hızlı hareket
+                        } else {
+                            // Sınır içinde - serbest hareket et
+
+                            // Bekleme süresi
+                            if (animal.grazingWait && animal.grazingWait > 0) {
+                                animal.grazingWait -= deltaTime * 1000;
+                                return;
+                            }
+
+                            // Yeni hedef gerekiyor mu?
+                            if (!animal.personalTarget || getDistance(animal.position, animal.personalTarget) < 0.0001) {
+                                // Daralan alan içinde rastgele nokta seç
+                                let newTarget = getRandomPointInPolygon(effectivePolygon);
+
+                                // Eğer bulunamazsa merkeze yakın bir nokta
+                                if (!newTarget) {
+                                    newTarget = getJitteredPosition(centerTarget, 0.0001);
+                                }
+
+                                animal.personalTarget = newTarget;
+                                // Kısa bekleme süresi (serbest hareket hissi)
+                                animal.grazingWait = (Math.random() * 2000 + 500) / (simulationSpeed || 1);
+                            }
+
+                            // Hedef sınır dışına çıktıysa yeni hedef belirle
+                            if (animal.personalTarget && !isPointInPolygon(animal.personalTarget, effectivePolygon)) {
+                                animal.personalTarget = getJitteredPosition(centerTarget, 0.0001 * currentShrinkScale);
+                            }
+
+                            // Normal hızda hareket
+                            moveAnimal(animal, deltaTime, 0.8);
+                        }
+                    }
+                });
+
+            } else if (simulationPhase === 'returning') {
+                // --- GERİ DÖNÜŞ FAZI ---
+                let activeAnimals = animals.filter(a => a.visible);
+                if (activeAnimals.length === 0) return;
+
+                let maxBarnIndex = -1;
+                activeAnimals.forEach(a => {
+                    if (a.barnIndex > maxBarnIndex) maxBarnIndex = a.barnIndex;
+                });
+
+                let targetPos = sortedBarns[maxBarnIndex].position; // En uzak ahır
+                let activeMoving = 0;
+                let arrivedCount = 0;
+
+                animals.forEach(animal => {
+                    if (animal.visible && animal.returning) {
+                        activeMoving++;
+
+                        // Target Sync
+                        let needsUpdate = false;
+                        if (!animal.baseTarget) needsUpdate = true;
+                        else if (animal.baseTarget.lat !== targetPos.lat || animal.baseTarget.lng !== targetPos.lng) needsUpdate = true;
+
+                        if (needsUpdate) {
+                            animal.baseTarget = targetPos;
+                            animal.personalTarget = getJitteredPosition(targetPos, 0.00005);
+                        }
+
+                        moveAnimal(animal, deltaTime);
+                        if (getDistance(animal.position, animal.personalTarget) < 0.0002) {
+                            arrivedCount++;
+                        }
+                    }
+                });
+
+                if (activeMoving > 0 && arrivedCount === activeMoving) {
+                    console.log(`✅ Returned to Barn index ${maxBarnIndex}`);
+                    animals.forEach(animal => {
+                        if (animal.visible && animal.barnIndex === maxBarnIndex) {
+                            animal.visible = false;
+                            animal.marker.setMap(null);
+                        }
+                    });
+
+                    animals.forEach(animal => {
+                        if (animal.visible) {
+                            animal.baseTarget = null;
+                            animal.personalTarget = null;
+                        }
+                    });
+                }
+            }
+        }
+
+        function moveAnimal(animal, deltaTime, speedFactor = 1.0) {
+            if (!animal.personalTarget) return;
+
+            const speed = (ANIMAL_SPEED * speedFactor) / 3600; // km/s
+            const distancePerFrame = speed * deltaTime * simulationSpeed;
+
+            const latDiff = animal.personalTarget.lat - animal.position.lat;
+            const lngDiff = animal.personalTarget.lng - animal.position.lng;
+            const totalDistance = Math.sqrt(latDiff * latDiff + lngDiff * lngDiff);
+
+            if (totalDistance < 0.00001) {
+                // Tam hedefe oturt (Titreşimi önler)
+                animal.position = { ...animal.personalTarget };
+                animal.marker.setPosition(animal.position);
+                return;
+            }
+
+            const moveRatio = Math.min(distancePerFrame / totalDistance / 111, 1);
+
+            animal.position.lat += latDiff * moveRatio;
+            animal.position.lng += lngDiff * moveRatio;
+
+            animal.marker.setPosition(animal.position);
+        }
+
+        function isTargetChanged(oldTarget, newTarget) {
+            if (!oldTarget && newTarget) return true;
+            if (oldTarget && !newTarget) return true;
+            if (!oldTarget && !newTarget) return false;
+            return oldTarget.lat !== newTarget.lat || oldTarget.lng !== newTarget.lng;
+        }
+
+        function getJitteredPosition(position, radius) {
+            const angle = Math.random() * 2 * Math.PI;
+            const r = Math.sqrt(Math.random()) * radius;
+            return {
+                lat: position.lat + r * Math.cos(angle),
+                lng: position.lng + r * Math.sin(angle)
+            };
+        }
+
+        function updateCorridors() {
+            // Mevcut koridorları temizle
+            corridorPolylines.forEach(line => line.setMap(null));
+            corridorPolylines = [];
+
+            if (simulationPhase === 'collecting' || simulationPhase === 'grazing') {
+                const sortedBarns = [...barns].sort((a, b) => a.order - b.order);
+
+                console.log(`🛣️ Koridor çizimi - Faz: ${simulationPhase}, Mevcut Barn Index: ${currentBarnIndex}`);
+
+                // Ahırlar arasında koridorlar
+                for (let i = 0; i < sortedBarns.length - 1; i++) {
+                    const color = i < currentBarnIndex ? '#34A853' : '#FBBC04';
+                    drawCorridor(sortedBarns[i].position, sortedBarns[i + 1].position, color);
+                }
+
+                // Son ahırdan otlak alanına koridor
+                if (selectedGrazingArea && sortedBarns.length > 0) {
+                    const lastBarn = sortedBarns[sortedBarns.length - 1];
+                    const grazingCenter = getPolygonCenter(selectedGrazingArea.coordinates);
+                    const color = currentBarnIndex >= sortedBarns.length ? '#34A853' : '#FBBC04';
+                    drawCorridor(lastBarn.position, grazingCenter, color);
+                }
+
+            } else if (simulationPhase === 'returning') {
+                // Dönüş fazında koridor (ters yönde)
+                const sortedBarns = [...barns].sort((a, b) => b.order - a.order);
+
+                if (selectedGrazingArea) {
+                    const grazingCenter = getPolygonCenter(selectedGrazingArea.coordinates);
+                    const firstReturnBarn = sortedBarns[0]; // Tersten sıralandığı için ilk eleman = en son ahır (Barn N)
+                    // Dikkat: sortedBarns burada TERS sıralı.
+                    // Barn N (En uzak) -> Barn 1 (En yakın)
+
+                    // Koridor: Otlak -> Barn N
+                    drawCorridor(grazingCenter, firstReturnBarn.position, '#FF9800');
+                }
+
+                // Ahırlar arası dönüş koridorları
+                for (let i = 0; i < sortedBarns.length - 1; i++) {
+                    drawCorridor(sortedBarns[i].position, sortedBarns[i + 1].position, '#FF9800');
+                }
+            }
+        }
+
+        function drawCorridor(start, end, color) {
+            // Ana koridor çizgisi
+            const corridor = new google.maps.Polyline({
+                path: [start, end],
+                strokeColor: color,
+                strokeOpacity: 0.9,
+                strokeWeight: 16,  // Daha kalın koridor
+                map: map
+            });
+
+            corridorPolylines.push(corridor);
+
+            // Kenar çitler (ince çizgiler)
+            const bearing = getBearing(start, end);
+            const perpendicularBearing1 = bearing + 90;
+            const perpendicularBearing2 = bearing - 90;
+
+            // Koridor genişliği için offset hesapla
+            const offset = CORRIDOR_WIDTH / 111000; // metre -> derece (kabaca)
+
+            const leftStart = offsetPosition(start, perpendicularBearing1, offset);
+            const leftEnd = offsetPosition(end, perpendicularBearing1, offset);
+            const rightStart = offsetPosition(start, perpendicularBearing2, offset);
+            const rightEnd = offsetPosition(end, perpendicularBearing2, offset);
+
+            const leftFence = new google.maps.Polyline({
+                path: [leftStart, leftEnd],
+                strokeColor: '#EA4335',
+                strokeOpacity: 0.7,
+                strokeWeight: 3,  // Daha kalın çit çizgileri
+                map: map
+            });
+
+            const rightFence = new google.maps.Polyline({
+                path: [rightStart, rightEnd],
+                strokeColor: '#EA4335',
+                strokeOpacity: 0.7,
+                strokeWeight: 3,  // Daha kalın çit çizgileri
+                map: map
+            });
+
+            corridorPolylines.push(leftFence, rightFence);
+        }
+
+        // ==========================================
+        // DURUM GÜNCELLEME
+        // ==========================================
+
+        function updateStatus(text, phase) {
+            document.getElementById('statusText').textContent = text;
+
+            const phaseNames = {
+                idle: 'Bekleniyor',
+                collecting: 'Toplama',
+                grazing: 'Otlatma',
+                gathering: 'Toplanma',
+                returning: 'Geri Dönüş',
+                completed: 'Tamamlandı'
+            };
+
+            document.getElementById('phaseText').textContent = `Aşama: ${phaseNames[phase] || phase}`;
+        }
+
+        function updateStatusTime() {
+            if (currentSimTime !== null) {
+                const hours = Math.floor(currentSimTime / 60);
+                const minutes = Math.floor(currentSimTime % 60);
+                document.getElementById('timeText').textContent =
+                    `Sim Zamanı: ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+            }
+
+            // Anlık hayvan sayılarını güncelle
+            const visibleAnimals = animals.filter(a => a.visible);
+            const sheepCount = visibleAnimals.filter(a => a.type === 'sheep').length;
+            const goatCount = visibleAnimals.filter(a => a.type === 'goat').length;
+            const cowCount = visibleAnimals.filter(a => a.type === 'cow').length;
+
+            const animalCountEl = document.getElementById('animalCountText');
+            if (animalCountEl) {
+                animalCountEl.textContent = `🐑 ${sheepCount} | 🐐 ${goatCount} | 🐄 ${cowCount}`;
+            }
+        }
+
+        // ==========================================
+        // YARDIMCI FONKSİYONLAR
+        // ==========================================
+
+        function getDistance(pos1, pos2) {
+            const lat1 = pos1.lat;
+            const lon1 = pos1.lng;
+            const lat2 = pos2.lat;
+            const lon2 = pos2.lng;
+
+            const R = 6371; // Dünya yarıçapı (km)
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
+        }
+
+        function getBearing(start, end) {
+            const lat1 = start.lat * Math.PI / 180;
+            const lat2 = end.lat * Math.PI / 180;
+            const dLon = (end.lng - start.lng) * Math.PI / 180;
+
+            const y = Math.sin(dLon) * Math.cos(lat2);
+            const x = Math.cos(lat1) * Math.sin(lat2) -
+                Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
+
+            return Math.atan2(y, x) * 180 / Math.PI;
+        }
+
+        function offsetPosition(position, bearing, distance) {
+            const lat1 = position.lat * Math.PI / 180;
+            const lon1 = position.lng * Math.PI / 180;
+            const brng = bearing * Math.PI / 180;
+
+            const lat2 = Math.asin(Math.sin(lat1) * Math.cos(distance) +
+                Math.cos(lat1) * Math.sin(distance) * Math.cos(brng));
+            const lon2 = lon1 + Math.atan2(Math.sin(brng) * Math.sin(distance) * Math.cos(lat1),
+                Math.cos(distance) - Math.sin(lat1) * Math.sin(lat2));
+
+            return {
+                lat: lat2 * 180 / Math.PI,
+                lng: lon2 * 180 / Math.PI
+            };
+        }
+
+        function getPolygonCenter(coordinates) {
+            let latSum = 0;
+            let lngSum = 0;
+
+            coordinates.forEach(coord => {
+                latSum += coord.lat;
+                lngSum += coord.lng;
+            });
+
+            return {
+                lat: latSum / coordinates.length,
+                lng: lngSum / coordinates.length
+            };
+        }
+
+        // Polygon'u merkeze doğru daralt
+        function getShrunkenPolygon(coordinates, scale) {
+            const center = getPolygonCenter(coordinates);
+            return coordinates.map(coord => ({
+                lat: center.lat + (coord.lat - center.lat) * scale,
+                lng: center.lng + (coord.lng - center.lng) * scale
+            }));
+        }
+
+        function isPointInPolygon(point, polygon) {
+            let inside = false;
+            for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+                const xi = polygon[i].lat, yi = polygon[i].lng;
+                const xj = polygon[j].lat, yj = polygon[j].lng;
+
+                const intersect = ((yi > point.lng) !== (yj > point.lng))
+                    && (point.lat < (xj - xi) * (point.lng - yi) / (yj - yi) + xi);
+                if (intersect) inside = !inside;
+            }
+            return inside;
+        }
+
+        function getRandomPointInPolygon(polygon) {
+            // Basit yöntem: polygon'un bounding box'ında rastgele nokta seç,
+            // polygon içinde değilse tekrar dene
+
+            let minLat = polygon[0].lat, maxLat = polygon[0].lat;
+            let minLng = polygon[0].lng, maxLng = polygon[0].lng;
+
+            polygon.forEach(coord => {
+                minLat = Math.min(minLat, coord.lat);
+                maxLat = Math.max(maxLat, coord.lat);
+                minLng = Math.min(minLng, coord.lng);
+                maxLng = Math.max(maxLng, coord.lng);
+            });
+
+            let point;
+            let attempts = 0;
+            do {
+                point = {
+                    lat: minLat + Math.random() * (maxLat - minLat),
+                    lng: minLng + Math.random() * (maxLng - minLng)
+                };
+                attempts++;
+            } while (!isPointInPolygon(point, polygon) && attempts < 100);
+
+            return point;
+        }
+
+        // ==========================================
+        // GPS VERİSİ İÇİN API (Android'den çağrılacak)
+        // ==========================================
+
+        let realTimeMarkers = {};
+
+        // Android'den gelen konum verisini işle
+        // id: Hayvan ID veya Ahır ID, lat: Enlem, lng: Boylam
+        function updateAnimalLocation(id, lat, lng) {
+            console.log(`GPS Update: ${id} -> ${lat}, ${lng}`);
+
+            if (!realTimeMarkers[id]) {
+                // Yeni marker oluştur
+                realTimeMarkers[id] = new google.maps.Marker({
+                    position: { lat: lat, lng: lng },
+                    map: map,
+                    title: `Canlı İzleme: ${id}`,
+                    icon: {
+                        path: google.maps.SymbolPath.CIRCLE,
+                        scale: 8,
+                        fillColor: "#FF0000",
+                        fillOpacity: 0.9,
+                        strokeWeight: 2,
+                        strokeColor: "#FFFFFF"
+                    }
+                });
+            } else {
+                // Mevcut marker'ı güncelle
+                realTimeMarkers[id].setPosition({ lat: lat, lng: lng });
+            }
+        }
+
+        // ==========================================
+        // ESP32 EXPORT FONKSİYONU (YENİ - MEVCUT KODA DOKUNULMADI)
+        // ==========================================
+
+        function exportForESP32() {
+            // Veri kontrolü
+            if (barns.length === 0) {
+                alert('❌ En az bir ahır eklemelisiniz!');
+                return;
+            }
+
+            if (grazingAreas.length === 0) {
+                alert('❌ En az bir otlatma alanı oluşturmalısınız!');
+                return;
+            }
+
+            // Tarih ve zamanı al
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hour = String(now.getHours()).padStart(2, '0');
+            const minute = String(now.getMinutes()).padStart(2, '0');
+            const defaultDateStr = `${year}-${month}-${day}_${hour}-${minute}`;
+
+            // Kullanıcıdan dosya adı iste (Default: Tarih-Saat)
+            const userInput = prompt("Dosya adı ne olsun?", defaultDateStr);
+            if (userInput === null) return; // İptal edildi
+
+            // Dosya adını güvenli hale getir
+            const safeName = userInput.replace(/[^a-zA-Z0-9._-]/g, '_') || defaultDateStr;
+
+            // Loading ekranını göster
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay) loadingOverlay.style.display = 'flex';
+
+            // İşlemi biraz gecikmeli yap ki loading ekranı görünsün
+            setTimeout(() => {
+                try {
+                    // Ana veri yapısı - TEK DOSYA
+                    const masterExportData = {
+                        project: "Siber Coban Plan",
+                        version: "2.0",
+                        generatedAt: new Date().toISOString(),
+                        note: safeName,
+                        barns: [], // Tüm ahırlar buraya
+                        grazingAreas: [] // Tüm otlaklar buraya
+                    };
+
+                    // 1. Otlak alanlarını ekle
+                    grazingAreas.forEach((area, areaIndex) => {
+                        const points = getPolygonCoordinates(area.polygon);
+                        masterExportData.grazingAreas.push({
+                            id: areaIndex,
+                            name: `Otlak ${areaIndex + 1}`,
+                            pointCount: points.length,
+                            points: points
+                        });
+                    });
+
+                    // 2. Her ahır için koridorları hesapla ve ekle
+                    barns.forEach(barn => {
+                        // Ahır verisini hazırla
+                        const barnData = {
+                            id: barn.id,
+                            name: `Ahir ${barn.id}`,
+                            position: barn.position,
+                            corridors: [] // Bu ahıra ait koridorlar
+                        };
+
+                        // Bu ahır için koridor hesapla
+                        // Geçici obje oluştur, helper buraya doldursun:
+                        const tempExport = { corridors: [], grazingAreas: [] };
+                        calculateCorridorsForExport(barn, tempExport);
+
+                        // Sonucu barnData'ya aktar
+                        barnData.corridors = tempExport.corridors;
+
+                        // Listeye ekle
+                        masterExportData.barns.push(barnData);
+                    });
+
+                    // JSON oluştur
+                    const jsonString = JSON.stringify(masterExportData, null, 2);
+                    const fileName = `sibercoban_MASTER_${safeName}.json`;
+
+                    // Android'e gönder
+                    if (typeof Android !== 'undefined' && Android.saveMapData) {
+                        Android.saveMapData(jsonString, fileName);
+                    }
+
+                    // Web için indir
+                    const blob = new Blob([jsonString], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+
+                    // Başarılı mesajı
+                    alert(`✅ PLAN OLUŞTURULDU!\n\nTüm ahırlar ve yollar TEK BİR ANA DOSYA (${fileName}) olarak kaydedildi.\n\nESP32 cihazınız açıldığında üzerindeki düğmeleri kullanarak hangi ahıra ait olduğunu (Ahır ID) seçmelidir.`);
+
+                } catch (error) {
+                    console.error("Export hatası:", error);
+                    alert("❌ Bir hata oluştu: " + error.message);
+                } finally {
+                    // Loading ekranını gizle
+                    if (loadingOverlay) loadingOverlay.style.display = 'none';
+                }
+            }, 500); // 500ms bekleme
+        }
+
+        function calculateCorridorsForExport(barn, exportData) {
+            // Her otlatma alanı için koridor hesapla
+            grazingAreas.forEach((area, areaIndex) => {
+                const barnPos = barn.position;
+                // FIX: calculatePolygonCenter -> getPolygonCenter
+                const areaCenter = getPolygonCenter(area.polygon.getPath() ?
+                    (area.coordinates || []) :
+                    area.coordinates);
+
+                // Eğer getPolygonCenter coordinates dizisi bekliyorsa:
+                // area.coordinates zaten dizi.
+
+                // getPolygonCenter(coordinates) fonksiyonu dosyanın 2026. satırında tanımlı.
+                // Normalde koordinat dizisi alıyor.
+
+
+                // Koridor oluştur
+                const corridor = {
+                    id: areaIndex,
+                    name: `Koridor ${areaIndex + 1}`,
+                    from: { lat: barnPos.lat, lng: barnPos.lng },
+                    to: { lat: areaCenter.lat, lng: areaCenter.lng },
+                    width: CORRIDOR_WIDTH,
+                    left: [],
+                    right: []
+                };
+
+                // Koridor kenar noktalarını hesapla
+                const angle = Math.atan2(areaCenter.lng - barnPos.lng, areaCenter.lat - barnPos.lat);
+                const perpAngle = angle + Math.PI / 2;
+                const halfWidth = CORRIDOR_WIDTH / 2;
+
+                // Enlem/boylam bazında mesafe hesaplama (yaklaşık)
+                const latOffset = (halfWidth / 111320) * Math.cos(perpAngle);
+                const lngOffset = (halfWidth / (111320 * Math.cos(barnPos.lat * Math.PI / 180))) * Math.sin(perpAngle);
+
+                // Başlangıç noktaları
+                corridor.left.push({
+                    lat: barnPos.lat + latOffset,
+                    lng: barnPos.lng + lngOffset
+                });
+                corridor.right.push({
+                    lat: barnPos.lat - latOffset,
+                    lng: barnPos.lng - lngOffset
+                });
+
+                // Bitiş noktaları
+                corridor.left.push({
+                    lat: areaCenter.lat + latOffset,
+                    lng: areaCenter.lng + lngOffset
+                });
+                corridor.right.push({
+                    lat: areaCenter.lat - latOffset,
+                    lng: areaCenter.lng - lngOffset
+                });
+
+                exportData.corridors.push(corridor);
+            });
+        }
+
+        // ==========================================
+        // SAYFA YÜKLENDİĞİNDE
+        // ==========================================
+
+        window.onload = function () {
+            // Google Maps API yüklendiğinde initMap çağrılacak
+        };
+    </script>
+
+    <!-- Google Maps API - [TR] Lütfen "YOUR_GOOGLE_MAPS_API_KEY_HERE" kısmına kendi Google Maps API anahtarınızı yerleştirin. / [EN] Please replace "YOUR_GOOGLE_MAPS_API_KEY_HERE" with your own Google Maps API key. -->
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY_HERE&callback=initMap&libraries=drawing">
+        </script>
+</body>
+
+</html>
