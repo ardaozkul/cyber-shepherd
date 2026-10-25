@@ -5,6 +5,16 @@
 </p>
 
 <p align="center">
+  <img src="https://img.shields.io/badge/T%C3%9CB%C4%B0TAK%202204--A%20(2026)-B%C3%B6lge%201.si%20%7C%20T%C3%BCrkiye%204.s%C3%BC-gold?style=for-the-badge&logo=award&logoColor=white" alt="TÜBİTAK 2204-A Award">
+  <img src="https://img.shields.io/badge/Category-Technology%20%26%20Design-blue?style=for-the-badge" alt="Technology and Design Category">
+</p>
+
+<p align="center">
+  🏆 <b>TÜBİTAK 2204-A Lise Araştırma Projeleri Yarışması (2026) — Teknoloji ve Tasarım Alanı:</b><br>
+  🥇 <b>Bölge Birincisi (Regional 1st Place Champion)</b> &nbsp;|&nbsp; 🎖️ <b>Türkiye 4.lüğü (National 4th Place Finalist)</b>
+</p>
+
+<p align="center">
   <b>🇬🇧 <a href="#-english-documentation">English Documentation</a> | 🇹🇷 <a href="#-türkçe-dokümantasyon">Türkçe Dokümantasyon</a> | 📸 <a href="#-screenshots--hardware-gallery--ekran-görüntüleri-ve-donanım-galerisi">Screenshots & Hardware Gallery</a></b>
 </p>
 
@@ -39,6 +49,11 @@
 ---
 
 # 🇬🇧 English Documentation
+
+## 🏆 Honors & Recognition
+- **Competition:** TÜBİTAK 2204-A High School Research Projects Competition (2026)
+- **Field / Category:** Technology & Design (Teknoloji ve Tasarım)
+- **Awards:** 🥇 **Regional Champion (1st Place)** &nbsp;|&nbsp; 🎖️ **National Finalist (4th Place Nationwide)**
 
 ## 📖 Overview
 
@@ -167,6 +182,11 @@ For security reasons, Google Maps API keys have been replaced with the placehold
 ---
 
 # 🇹🇷 Türkçe Dokümantasyon
+
+## 🏆 Başarılar ve Dereceler
+- **Yarışma:** TÜBİTAK 2204-A Lise Öğrencileri Araştırma Projeleri Yarışması (2026)
+- **Alan:** Teknoloji ve Tasarım
+- **Dereceler:** 🥇 **Bölge Birinciliği** &nbsp;|&nbsp; 🎖️ **Türkiye 4.lüğü (Türkiye Finalleri)**
 
 ## 📖 Proje Özeti
 
