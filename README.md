@@ -22,6 +22,14 @@
 
 # 📸 Screenshots & Hardware Gallery / Ekran Görüntüleri ve Donanım Galerisi
 
+### 🎖️ TÜBİTAK 2204-A Award Ceremony / Ödül Töreni
+
+<p align="center">
+  <img src="docs/images/tubitak_award_ceremony.png" alt="TÜBİTAK 2204-A Ödül Töreni - Arda ÖZKUL" width="700">
+  <br>
+  <em>TÜBİTAK 2204-A Araştırma Projeleri Ödül Töreni — Arda ÖZKUL &nbsp;|&nbsp; 🎥 <a href="https://www.youtube.com/live/NBXWoSTFw_w?t=4918s">Canlı Yayın Kaydı (1:21:58)</a></em>
+</p>
+
 ### 🔌 Real Hardware Prototype (ESP32-C3 Smart Collar / Akıllı Tasma Prototipi)
 
 | **Hardware Architecture (Presentation Prototype)**<br>*ESP32-C3 SuperMini, 0.42" OLED, GY-NEO6MV2 GPS + Ceramic Antenna, Ra-01 LoRa SX1278, Active Buzzer, Vibration Motor & Status LED* | **Live Collar Operation (Wi-Fi / Hotspot Gateway Mode)**<br>*ESP32-C3 powered on with 0.42" OLED displaying real-time gateway search (`SERVER ARANIYOR 192.168.43.1`)* |
@@ -54,6 +62,7 @@
 - **Competition:** TÜBİTAK 2204-A High School Research Projects Competition (2026)
 - **Field / Category:** Technology & Design (Teknoloji ve Tasarım)
 - **Awards:** 🥇 **Regional Champion (1st Place)** &nbsp;|&nbsp; 🎖️ **National Finalist (4th Place Nationwide)**
+- **Ceremony Record:** 🎥 [Official Live Stream Broadcast (Timestamp 1:21:58)](https://www.youtube.com/live/NBXWoSTFw_w?t=4918s)
 
 ## 📖 Overview
 
@@ -187,6 +196,7 @@ For security reasons, Google Maps API keys have been replaced with the placehold
 - **Yarışma:** TÜBİTAK 2204-A Lise Öğrencileri Araştırma Projeleri Yarışması (2026)
 - **Alan:** Teknoloji ve Tasarım
 - **Dereceler:** 🥇 **Bölge Birinciliği** &nbsp;|&nbsp; 🎖️ **Türkiye 4.lüğü (Türkiye Finalleri)**
+- **Tören Yayını:** 🎥 [Resmi Canlı Yayın Ödül Takdimi (1:21:58)](https://www.youtube.com/live/NBXWoSTFw_w?t=4918s)
 
 ## 📖 Proje Özeti
 
