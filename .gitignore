@@ -1,9 +1,10 @@
-# Ignore everything except Web interface, Android App source, and README
+# Ignore everything except Web interface, Android App source, README, and documentation images
 /*
 !/README.md
 !/.gitignore
 !/sibercobanv2.html
 !/android_app/
+!/docs/
 
 # Android build & local artifacts to ignore
 android_app/.gradle/
