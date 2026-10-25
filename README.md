@@ -5,13 +5,13 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/T%C3%9CB%C4%B0TAK%202204--A%20(2026)-B%C3%B6lge%201.si%20%7C%20T%C3%BCrkiye%204.s%C3%BC-gold?style=for-the-badge&logo=award&logoColor=white" alt="TÜBİTAK 2204-A Award">
-  <img src="https://img.shields.io/badge/Category-Technology%20%26%20Design-blue?style=for-the-badge" alt="Technology and Design Category">
+  <img src="https://img.shields.io/badge/T%C3%9CB%C4%B0TAK%202204--A%20(2026)-Regional%201st%20%7C%20National%204th-gold?style=for-the-badge&logo=award&logoColor=white" alt="TÜBİTAK 2204-A Award">
+  <img src="https://img.shields.io/badge/Field-Technology%20%26%20Design-blue?style=for-the-badge" alt="Technology and Design Field">
 </p>
 
 <p align="center">
-  🏆 <b>TÜBİTAK 2204-A Lise Araştırma Projeleri Yarışması (2026) — Teknoloji ve Tasarım Alanı:</b><br>
-  🥇 <b>Bölge Birincisi (Regional 1st Place Champion)</b> &nbsp;|&nbsp; 🎖️ <b>Türkiye 4.lüğü (National 4th Place Finalist)</b>
+  🏆 <b>TÜBİTAK 2204-A High School Research Projects Competition (2026) — Technology & Design Category:</b><br>
+  🥇 <b>Regional Champion (1st Place)</b> &nbsp;|&nbsp; 🎖️ <b>National Finalist (4th Place Nationwide)</b>
 </p>
 
 <p align="center">
