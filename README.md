@@ -4,14 +4,17 @@
   <img src="docs/images/banner.png" alt="Cyber Shepherd - Siber Çoban Banner" width="100%">
 </p>
 
-<p align="center">
-  <img src="https://img.shields.io/badge/T%C3%9CB%C4%B0TAK%202204--A%20(2026)-Regional%201st%20%7C%20National%204th-gold?style=for-the-badge&logo=award&logoColor=white" alt="TÜBİTAK 2204-A Award">
-  <img src="https://img.shields.io/badge/Field-Technology%20%26%20Design-blue?style=for-the-badge" alt="Technology and Design Field">
-</p>
+> [!IMPORTANT]
+> ### 🏆 AWARD-WINNING PROJECT — TÜBİTAK 2204-A (2026)
+> 🥇 **Regional Champion (1st Place)** &nbsp;|&nbsp; 🎖️ **National Finalist (4th Place Nationwide)**  
+> 🏷️ **Field / Category:** Technology & Design (*Teknoloji ve Tasarım*) &nbsp;|&nbsp; 📅 **Award Date:** April 30, 2026  
+> 🎥 **Official Ceremony Broadcast:** [YouTube Live Stream Timestamp (1:22:41)](https://www.youtube.com/live/NBXWoSTFw_w?t=4961s)
 
 <p align="center">
-  🏆 <b>TÜBİTAK 2204-A High School Research Projects Competition (2026) — Technology & Design Category:</b><br>
-  🥇 <b>Regional Champion (1st Place)</b> &nbsp;|&nbsp; 🎖️ <b>National Finalist (4th Place Nationwide)</b>
+  <a href="https://www.youtube.com/live/NBXWoSTFw_w?t=4961s">
+    <img src="https://img.shields.io/badge/T%C3%9CB%C4%B0TAK%202204--A%20(2026)-Regional%201st%20Champion%20%7C%20National%204th%20Finalist-ffd700?style=for-the-badge&logo=youtube&logoColor=red&labelColor=black" alt="TÜBİTAK 2204-A Award">
+  </a>
+  <img src="https://img.shields.io/badge/Category-Technology%20%26%20Design-007acc?style=for-the-badge&logo=blueprint&logoColor=white" alt="Technology and Design Category">
 </p>
 
 <p align="center">
